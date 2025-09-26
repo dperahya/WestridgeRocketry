@@ -11,6 +11,17 @@ uint32_t timer = millis();
 // Set your local UTC offset here in hours (e.g., -7 for PDT)
 const int8_t utcOffset = -7;
 
+float currAlt = 0.00;
+float prevAlt = 0.00;
+float initAlt = 0.00;
+float apogee = 0.00; //highest altitude; so far, 0m
+
+bool prelimFallCheck = false; //only checks whether currAlt > apogee
+bool falling = false;
+bool doubleCheckFalling = false;
+bool haveDeployed = false;
+bool onGround = false;
+
 void setup() {
   Serial.begin(9600);
   LoRa.begin(915E6);
@@ -23,6 +34,7 @@ void setup() {
 }
 
 void loop() {
+  
   char c = GPS.read();
   if (GPSECHO && c) Serial.print(c);
 
@@ -71,6 +83,19 @@ void loop() {
       output += "\nSatellites: " + String((int)GPS.satellites);
       output += "\nAntenna status: " + String((int)GPS.antenna);
 
+      //altitude settings do we want prelim fall check
+      /*
+      prevAlt = currAlt; //altitude from last round becomes prevAlt
+      currAlt = GPS.altitude; //new currAlt is collected
+      if (currAlt > apogee || currAlt == apogee) { //if currAlt > apogee or currAlt = apogee
+        apogee = currAlt; //redefine apogee to currAlt
+      } else if (currAlt < apogee && currAlt > (apogee - 10)) { //if currAlt is within five meters of apogee, do nothing
+      } else { //otherwise, preliminary fall check is true
+        Serial.println("prelimFallCheck = true");
+        prelimFallCheck = true;
+      }
+      */
+      
       // Send via LoRa
       LoRa.beginPacket();
       LoRa.print(output);
