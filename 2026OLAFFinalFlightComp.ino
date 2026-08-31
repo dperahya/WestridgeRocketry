@@ -8,7 +8,7 @@
 #include <SD.h>
 
 #define SEALEVELPRESSURE_HPA (1013.25)
-const int chipSelect = 7;
+const int chipSelectSD = 7;
 
 Adafruit_LSM6DSO32 dso32;
 Adafruit_BMP3XX bmp;
@@ -23,7 +23,7 @@ void setup() {
 
   // --- SD CARD ---
   Serial.print("Initializing SD card...");
-  if (!SD.begin(chipSelect)) {
+  if (!SD.begin(chipSelectSD)) {
     Serial.println("SD failed!");
     while (1);
   }
